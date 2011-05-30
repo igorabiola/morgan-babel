@@ -8,7 +8,13 @@ physics.setGravity( 0, 0 ) -- overhead view, therefore no gravity vector
 
 local w, h = display.contentWidth, display.contentHeight
 
-local rect2 = display.newRect(0,0,w,h)
+-- Criando o cenário
+local rect = display.newRect(0,0,w,h)
+local rect2 = display.newRect(0,0,w,20)
+local rect3 = display.newRect(0,h,w,-20)
+
+rect2:setFillColor(0,255,0)
+rect3:setFillColor(255,0,0)
 
 
 local function sheduleForNextRound( func )
@@ -32,6 +38,8 @@ local function createUnit (w, h, size)
 
 	-- Status do movimento
 	unit.moveStatus = false
+	
+	unit.life = 1000
 
 	function unit._move(self, ...)
 		local x,y,count, xf, yf, callback = ...
@@ -73,25 +81,76 @@ local function createUnit (w, h, size)
 	end
 
 	return unit
+end
 
+local function createTower (x, y)
+	local tower = {}
+	
+	local rect = display.newRect(x,y,50,50)
+	rect:setFillColor(35,155,0)
+	rect:setStrokeColor(0, 0, 255)
+	rect.strokeWidth = 3
+
+	-- Forma da Figura
+	tower.shape = rect
+	
+	tower.damage = 100
+	tower.detectArea = 200
+	
+	function tower.move (self)
+	
+	end
+	
+	function tower.fire (self)
+		local unit = createUnit(self.shape.xOrigin, self.shape.xOrigin, 10)
+		unit.shape:setFillColor(0,255,255)
+		unit:moveTo(w/2,h, function()  unit:destroy() end)
+	end
+	
+	function tower.call( self, func, ...)
+		local args	 = ...
+		return function()
+			func(self, unpack(args))
+		end
+	end
+	
+	return tower
 end
 
 
 local function createAndMoveUp()
 	local unit = createUnit(w/2, h, 20)
+	rect2:toFront()
+	rect3:toFront()
 	unit:moveTo(w/2,0, function()  unit:destroy() end)
 end
 
 local function createAndMoveDown()
 	local unit = createUnit(w/2, 0, 20)
 	unit.shape:setFillColor(0,255,0)
+	rect2:toFront()
+	rect3:toFront()
 	unit:moveTo(w/2,h, function()  unit:destroy() end)
 end
 
+local function fire()
+	local unit = createUnit(w/2, 0, 20)
+	unit.shape:setFillColor(0,255,0)
+	rect2:toFront()
+	rect3:toFront()
+	unit:moveTo(w/2,h, function()  unit:destroy() end)
+end
+
+local tower = createTower(100,100)
 
 timer.performWithDelay(1000, createAndMoveUp)
 timer.performWithDelay(2000, createAndMoveUp)
 timer.performWithDelay(1000, createAndMoveDown)
 timer.performWithDelay(2000, createAndMoveDown)
+
+
+timer.performWithDelay(2000, tower:call(tower.fire, {tower} ))
+timer.performWithDelay(2500, tower:call(tower.fire, {tower} ))
+timer.performWithDelay(3000, tower:call(tower.fire, {tower} ))
 
 
