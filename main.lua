@@ -141,7 +141,26 @@ local function fire()
 	unit:moveTo(w/2,h, function()  unit:destroy() end)
 end
 
+local function testClick(self, event)
+	local phase = event.phase
+	local circle = self[1]
+	for k,v in pairs(event) do
+		print(k, v)
+	end 
+	
+	if (phase == "began") then 
+		circle:setFillColor(255,0,255)
+	end
+end
+
 local tower = createTower(100,100)
+
+local button = display.newGroup()
+local default = display.newCircle(200, 200, 100)
+default:setFillColor(0,255,255)
+button:insert( default, true )
+button.touch = testClick
+button:addEventListener( "touch", button )
 
 timer.performWithDelay(1000, createAndMoveUp)
 timer.performWithDelay(2000, createAndMoveUp)
