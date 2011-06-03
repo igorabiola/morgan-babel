@@ -1,5 +1,11 @@
+local scenario = require ("scenario")
+print(scenario.info)
+scenario.loadMap('testeMap')
+
 local physics = require("physics")
 physics.start()
+
+--[[
 
 physics.setScale( 60 ) -- a value that seems good for small objects (based on playtesting)
 physics.setGravity( 0, 0 ) -- overhead view, therefore no gravity vector
@@ -9,7 +15,7 @@ physics.setGravity( 0, 0 ) -- overhead view, therefore no gravity vector
 local w, h = display.contentWidth, display.contentHeight
 
 -- Criando o cenário
-local rect = display.newRect(0,0,w,h)
+--local rect = display.newRect(0,0,w,h)
 local rect2 = display.newRect(0,0,w,20)
 local rect3 = display.newRect(0,h,w,-20)
 
@@ -38,7 +44,7 @@ local function createUnit (w, h, size)
 
 	-- Status do movimento
 	unit.moveStatus = false
-	
+
 	unit.life = 1000
 
 	function unit._move(self, ...)
@@ -85,7 +91,7 @@ end
 
 local function createTower (x, y)
 	local tower = {}
-	
+
 	local rect = display.newRect(x,y,50,50)
 	rect:setFillColor(35,155,0)
 	rect:setStrokeColor(0, 0, 255)
@@ -93,27 +99,27 @@ local function createTower (x, y)
 
 	-- Forma da Figura
 	tower.shape = rect
-	
+
 	tower.damage = 100
 	tower.detectArea = 200
-	
+
 	function tower.move (self)
-	
+
 	end
-	
+
 	function tower.fire (self)
 		local unit = createUnit(self.shape.xOrigin, self.shape.xOrigin, 10)
 		unit.shape:setFillColor(0,255,255)
 		unit:moveTo(w/2,h, function()  unit:destroy() end)
 	end
-	
+
 	function tower.call( self, func, ...)
 		local args	 = ...
 		return function()
 			func(self, unpack(args))
 		end
 	end
-	
+
 	return tower
 end
 
@@ -146,9 +152,9 @@ local function testClick(self, event)
 	local circle = self[1]
 	for k,v in pairs(event) do
 		print(k, v)
-	end 
-	
-	if (phase == "began") then 
+	end
+
+	if (phase == "began") then
 		circle:setFillColor(255,0,255)
 	end
 end
@@ -172,4 +178,4 @@ timer.performWithDelay(2000, tower:call(tower.fire, {tower} ))
 timer.performWithDelay(2500, tower:call(tower.fire, {tower} ))
 timer.performWithDelay(3000, tower:call(tower.fire, {tower} ))
 
-
+]]
