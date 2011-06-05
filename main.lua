@@ -1,9 +1,74 @@
 local scenario = require ("scenario")
+local unit = require ("unit")
+local tower = require ("tower")
+
+local w, h = display.contentWidth, display.contentHeight
+
 print(scenario.info)
+print(unit.info)
+print(tower.info)
+
 scenario.loadMap('testeMap')
 
 local physics = require("physics")
 physics.start()
+
+local function testClick(self, event)
+	local phase = event.phase
+	
+	for k,v in pairs(event) do
+		print(k, v)
+	end
+	
+	if (phase == "began") then
+		local warrior = unit.createUnit(w/2, h, 20)
+
+		warrior:moveTo(w/2,0, function()  warrior:destroy() end)
+	end
+end
+
+local function upgradeUnit()
+	local upgrade = display.newGroup()
+
+	local rect = display.newRect(0,300,300,400)
+	rect:setFillColor(0,0,0, 100)
+	local warriorText = display.newText(upgrade, "Guerreiro", 100, 340, native.systemFont, 30)
+	warriorText:setTextColor(255, 255, 255, 100)
+
+	upgrade.touch = testClick
+	upgrade:addEventListener( "touch", upgrade )
+end
+
+local function upgradeButtonHandle(self, event)
+	local phase = event.phase
+	local rect = self[1]
+	
+	if (phase == "began") then
+		rect:removeSelf()
+		upgradeUnit()
+		rect:setFillColor(0,0,0,150)
+	end
+end
+
+--Teste do modulo de unidade
+local warrior = unit.createUnit(w/2, h, 20)
+
+warrior:moveTo(w/2,0, function()  warrior:destroy() end)
+-- Fim Teste
+
+--Teste do modulo torre
+local t1 = tower.createTower(50, 50)
+
+t1:fire()
+--Fim Teste
+	
+local upgradeButtonGroup = display.newGroup()
+
+local upgradeButton = display.newRect(upgradeButtonGroup, 30,300,70,70)
+upgradeButton:setFillColor(0,0,0,150)
+
+upgradeButtonGroup.touch = upgradeButtonHandle
+upgradeButtonGroup:addEventListener( "touch", upgradeButtonGroup )
 
 --[[
 
@@ -21,107 +86,6 @@ local rect3 = display.newRect(0,h,w,-20)
 
 rect2:setFillColor(0,255,0)
 rect3:setFillColor(255,0,0)
-
-
-local function sheduleForNextRound( func )
-	--todo: refatorar
-	timer.performWithDelay(100, func)
-end
-
-local function createUnit (w, h, size)
-	local unit = {}
-
-	local circ = display.newCircle(w, h-size, size)
-	circ:setFillColor(255,0,0)
-	circ:setStrokeColor(0, 0, 255)
-	circ.strokeWidth = 3
-
-	-- Forma da Figura
-	unit.shape = circ
-
-	-- Velocidade da Figura
-	unit.velocity = 20
-
-	-- Status do movimento
-	unit.moveStatus = false
-
-	unit.life = 1000
-
-	function unit._move(self, ...)
-		local x,y,count, xf, yf, callback = ...
-		self.moveStatus = true
-		self.shape:translate(x, y)
-
-		if (count == 0) then
-			self.moveStatus = false
-			if callback then callback() end
-		else
-			self:moveTo(xf,yf, callback)
-		end
-	end
-
-	function unit.moveTo(self, x, y, callback)
-		local xorigin = self.shape.xOrigin
-		local yorigin = self.shape.yOrigin
-
-		local xf = x - xorigin
-		local yf = y - yorigin
-
-		local modulo = math.sqrt((xf*xf) + (yf*yf))
-
-		local n =  math.ceil(modulo / self.velocity)
-
-		local tab = {( xf / modulo) * self.velocity, (yf / modulo) * self.velocity, n-1, x, y, callback }
-		sheduleForNextRound(self:call(self._move, tab))
-	end
-
-	function unit.destroy (self)
-		self.shape:removeSelf()
-	end
-
-	function unit.call( self, func, ...)
-		local args	 = ...
-		return function()
-			func(self, unpack(args))
-		end
-	end
-
-	return unit
-end
-
-local function createTower (x, y)
-	local tower = {}
-
-	local rect = display.newRect(x,y,50,50)
-	rect:setFillColor(35,155,0)
-	rect:setStrokeColor(0, 0, 255)
-	rect.strokeWidth = 3
-
-	-- Forma da Figura
-	tower.shape = rect
-
-	tower.damage = 100
-	tower.detectArea = 200
-
-	function tower.move (self)
-
-	end
-
-	function tower.fire (self)
-		local unit = createUnit(self.shape.xOrigin, self.shape.xOrigin, 10)
-		unit.shape:setFillColor(0,255,255)
-		unit:moveTo(w/2,h, function()  unit:destroy() end)
-	end
-
-	function tower.call( self, func, ...)
-		local args	 = ...
-		return function()
-			func(self, unpack(args))
-		end
-	end
-
-	return tower
-end
 
 
 local function createAndMoveUp()
