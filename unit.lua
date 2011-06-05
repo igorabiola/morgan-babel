@@ -9,13 +9,30 @@ end
 function u.createUnit (w, h, size)
 	local unit = {}
 
-	local circ = display.newCircle(w, h-size, size)
+	unitGroup = display.newGroup()
+	unitGroup:translate(w,h)
+
+	local circ = display.newCircle(w, h, size)
 	circ:setFillColor(255,0,0)
 	circ:setStrokeColor(0, 0, 255)
 	circ.strokeWidth = 3
 
+	print(circ.x, circ.y,circ.xOrigin, circ.yOrigin )
+	unitGroup:insert(circ, true)
+	print(circ.x, circ.y,circ.xOrigin, circ.yOrigin )
+
+	local vision = display.newCircle(w, h, size * 2)
+	vision:setFillColor(0, 0, 0, 0)
+	vision:setStrokeColor(0, 0, 255)
+	vision.strokeWidth = 3
+	unitGroup:insert(vision, true)
+
+
+
+	print(unitGroup.x, unitGroup.y,unitGroup.xOrigin, unitGroup.yOrigin )
+
 	-- Forma da Figura
-	unit.shape = circ
+	unit.shape = unitGroup
 
 	-- Velocidade da Figura
 	unit.velocity = 20
@@ -28,6 +45,10 @@ function u.createUnit (w, h, size)
 	function unit._move(self, ...)
 		local x,y,count, xf, yf, callback = ...
 		self.moveStatus = true
+		--[[for i=1, self.shape.numChildren do
+			self.shape[i]:translate(x, y)
+		end
+		--]]
 		self.shape:translate(x, y)
 
 		if (count == 0) then

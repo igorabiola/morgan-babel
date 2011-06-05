@@ -10,6 +10,11 @@ function t.createTower (x, y)
 	rect:setStrokeColor(0, 0, 255)
 	rect.strokeWidth = 3
 
+	local vision = display.newCircle(x+25, y+25,100)
+	vision:setFillColor(0, 0, 0, 0)
+	vision:setStrokeColor(0, 0, 255)
+	vision.strokeWidth = 3
+
 	-- Forma da Figura
 	tower.shape = rect
 
