@@ -35,7 +35,7 @@ function u.createUnit (w, h, size)
 	unit.shape = unitGroup
 
 	physics.addBody( unit.shape ,  "dynamic" ,
-	{ density = 0, friction = 0, bounce = 0, isSensor=true } )
+	{ density = 0, friction = 0, bounce = 0, isSensor=true, radius = size * 2 } )
 
 
 	-- Velocidade da Figura
