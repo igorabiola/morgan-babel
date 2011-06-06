@@ -1,6 +1,10 @@
 local scenario = require ("scenario")
 local unit = require ("unit")
 local tower = require ("tower")
+local physics = require("physics")
+physics.start()
+physics.setGravity( 0, 0 )
+physics.setDrawMode( "hybrid" )
 
 local w, h = display.contentWidth, display.contentHeight
 
@@ -15,8 +19,7 @@ print(tower.info)
 local gameMap = scenario.loadMap('testeMap')
 local background = gameMap.background
 
-local physics = require("physics")
-physics.start()
+
 
 local function testClick(self, event)
 	local phase = event.phase
@@ -78,6 +81,7 @@ upgradeButtonGroup:addEventListener( "touch", upgradeButtonGroup )
 
 --Teste do modulo de unidade
 local warrior = unit.createUnit(w/2, h, 20)
+local warrior_steady = unit.createUnit(w/2, h-100, 20)
 
 local moveIndex = 1
 local function rCallback()
@@ -90,4 +94,18 @@ local function rCallback()
 end
 
 warrior:moveTo(gameMap.map.path[1][1], gameMap.map.path[1][2], rCallback)
+
+--physics.addBody( warrior.shape ,{ density = 0, friction = 0, bounce = 0, isSensor=true } )
+--physics.addBody( warrior_steady.shape  ,  { density = 0, friction = 0, bounce = 0 } )
+
+local function onCollision( event )
+	if ( event.phase == "began" ) then
+		print( "began: " , event.object1 , event.object2 )
+	elseif ( event.phase == "ended" ) then
+		print( "ended: " , event.object1 , event.object2 )
+	end
+end
+
+Runtime:addEventListener( "collision", onCollision )
+
 -- Fim Teste

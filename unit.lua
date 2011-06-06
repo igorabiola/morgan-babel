@@ -1,3 +1,5 @@
+require "physics"
+
 local u = {}
 u.info = "modulo de unidade"
 
@@ -17,22 +19,24 @@ function u.createUnit (w, h, size)
 	circ:setStrokeColor(0, 0, 255)
 	circ.strokeWidth = 3
 
-	print(circ.x, circ.y,circ.xOrigin, circ.yOrigin )
+	--physics.addBody( circ ,{ density = 0, friction = 0, bounce = 0 } )
+
 	unitGroup:insert(circ, true)
-	print(circ.x, circ.y,circ.xOrigin, circ.yOrigin )
 
 	local vision = display.newCircle(w, h, size * 2)
 	vision:setFillColor(0, 0, 0, 0)
 	vision:setStrokeColor(0, 0, 255)
 	vision.strokeWidth = 3
+
+
 	unitGroup:insert(vision, true)
-
-
-
-	print(unitGroup.x, unitGroup.y,unitGroup.xOrigin, unitGroup.yOrigin )
 
 	-- Forma da Figura
 	unit.shape = unitGroup
+
+	physics.addBody( unit.shape ,  "dynamic" ,
+	{ density = 0, friction = 0, bounce = 0, isSensor=true } )
+
 
 	-- Velocidade da Figura
 	unit.velocity = 20
