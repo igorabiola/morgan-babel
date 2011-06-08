@@ -60,15 +60,12 @@ local function upgradeButtonHandle(self, event)
 end
 
 
---Teste do modulo torre
-local t1 = tower.createTower(50, 50)
-
-t1:fire()
---Fim Teste
 
 local upgradeButtonGroup = display.newGroup()
 
 backgroundGroup:insert(background)
+
+--[[
 
 local upgradeButton = display.newRect(upgradeButtonGroup, 30,300,70,70)
 upgradeButton:setFillColor(0,0,0,150)
@@ -78,6 +75,8 @@ backgroundGroup:addEventListener( "touch", backgroundGroup )
 
 upgradeButtonGroup.touch = upgradeButtonHandle
 upgradeButtonGroup:addEventListener( "touch", upgradeButtonGroup )
+
+--]]
 
 --Teste do modulo de unidade
 local warrior = unit.createUnit(w/2, h, 20)
@@ -95,17 +94,6 @@ end
 
 warrior:moveTo(gameMap.map.path[1][1], gameMap.map.path[1][2], rCallback)
 
---physics.addBody( warrior.shape ,{ density = 0, friction = 0, bounce = 0, isSensor=true } )
---physics.addBody( warrior_steady.shape  ,  { density = 0, friction = 0, bounce = 0 } )
 
-local function onCollision( event )
-	if ( event.phase == "began" ) then
-		print( "began: " , event.object1 , event.object2 )
-	elseif ( event.phase == "ended" ) then
-		print( "ended: " , event.object1 , event.object2 )
-	end
-end
-
-Runtime:addEventListener( "collision", onCollision )
 
 -- Fim Teste

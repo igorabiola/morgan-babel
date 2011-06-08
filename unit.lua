@@ -1,45 +1,86 @@
 require "physics"
 
+local obj = require "object"
+
 local u = {}
 u.info = "modulo de unidade"
+
+
 
 local function sheduleForNextRound( func )
 	--todo: refatorar
 	timer.performWithDelay(100, func)
 end
 
-function u.createUnit (w, h, size)
-	local unit = {}
+local function handleVisionCollision( self, event )
+	--print("inner vision collision", self.id, event.other.id)
+end
 
-	unitGroup = display.newGroup()
-	unitGroup:translate(w,h)
+local function handleCoreCollision( self, event )
+	--print("inner core collision", self.id, event.other.id)
+end
+
+local function handleCorePreCollision( self, event )
+	--print("inner core preCollision", self.id, event.other.id)
+end
+
+local function handleCorePostCollision( self, event )
+	--print("inner core postCollision", self.id, event.other.id)
+end
+
+function u.createUnit (w, h, size)
+	local unit = obj.createObj( "unit" )
+
+	--unitGroup = display.newGroup()
+	--unitGroup:translate(w,h)
 
 	local circ = display.newCircle(w, h, size)
 	circ:setFillColor(255,0,0)
 	circ:setStrokeColor(0, 0, 255)
 	circ.strokeWidth = 3
 
-	--physics.addBody( circ ,{ density = 0, friction = 0, bounce = 0 } )
+	circ.container = unit
+	circ.type = "core"
+	circ.id = circ.type.."_" .. unit.id
 
-	unitGroup:insert(circ, true)
+
+
+	circ.preCollision = handleCorePreCollision
+	circ:addEventListener( "preCollision", circ)
+
+	circ.collision = handleCoreCollision
+	circ:addEventListener( "collision", circ)
+
+	circ.postCollision = handleCorePostCollision
+	circ:addEventListener( "postCollision", circ)
+
+	--unitGroup:insert(circ, true)
 
 	local vision = display.newCircle(w, h, size * 2)
 	vision:setFillColor(0, 0, 0, 0)
 	vision:setStrokeColor(0, 0, 255)
 	vision.strokeWidth = 3
 
+	vision.container = unit
+	vision.type = "vision"
+	vision.id = vision.type .."_" .. unit.id
 
-	unitGroup:insert(vision, true)
+	--Tratamento de colisao com o campo de visao
+	vision.collision = handleVisionCollision
+	vision:addEventListener( "collision", vision)
 
 	-- Forma da Figura
-	unit.shape = unitGroup
+	unit.shape = {}
+	table.insert(unit.shape, circ)
+	table.insert(unit.shape, vision)
 
-	physics.addBody( unit.shape ,  "dynamic" ,
-	{ density = 0, friction = 0, bounce = 0, isSensor=true, radius = size * 2 } )
+	physics.addBody( circ ,{ density=0.8, friction=0.3, bounce=0.3 , isSensor=false, radius = size } )
+	physics.addBody( vision ,{ density=0.0, friction=0.0, bounce=0.0, isSensor=true , radius = size*2} )
 
+	local joint = physics.newJoint("pivot", circ, vision, w,h)
 
 	-- Velocidade da Figura
-	unit.velocity = 20
+	unit.velocity = 10
 
 	-- Status do movimento
 	unit.moveStatus = false
@@ -49,11 +90,8 @@ function u.createUnit (w, h, size)
 	function unit._move(self, ...)
 		local x,y,count, xf, yf, callback = ...
 		self.moveStatus = true
-		--[[for i=1, self.shape.numChildren do
-			self.shape[i]:translate(x, y)
-		end
-		--]]
-		self.shape:translate(x, y)
+		--self.shape:translate(x, y)
+		self.shape[1]:setLinearVelocity( x*self.velocity, y*self.velocity )
 
 		if (count == 0) then
 			self.moveStatus = false
@@ -64,8 +102,8 @@ function u.createUnit (w, h, size)
 	end
 
 	function unit.moveTo(self, x, y, callback)
-		local xorigin = self.shape.xOrigin
-		local yorigin = self.shape.yOrigin
+		local xorigin = self.shape[1].xOrigin
+		local yorigin = self.shape[1].yOrigin
 
 		local xf = x - xorigin
 		local yf = y - yorigin
@@ -79,7 +117,9 @@ function u.createUnit (w, h, size)
 	end
 
 	function unit.destroy (self)
-		self.shape:removeSelf()
+		for k,v in ipairs(self.shape) do
+			v:removeSelf()
+		end
 	end
 
 	function unit.call( self, func, ...)
