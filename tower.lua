@@ -33,6 +33,10 @@ end
 
 local function fire (self, target)
 	print(self.id, "fire at", target.id, target.x, target.y)
+	
+	--local circ = display.newCircle(self.shape[1].x, self.shape[1].y, 10)
+	--circ:setFillColor(0,255,255)
+	--physics.addBody( circ ,{ density=0, friction=0, bounce=0, radius = 10, isSensor=true } )
 	--[[
 		local circ = display.newCircle(self.shape[1].x, self.shape[1].y, 10)
 		circ:setFillColor(0,255,255)
@@ -44,7 +48,13 @@ end
 function t.createTower (x, y)
 	local tower = obj.createObj("tower")
 
-
+	---------------- Váriaveis da torre ------------------
+	tower.shape = {}
+	tower.damage = 100
+	tower.detectArea = vision_radius
+	tower.defense = 200
+	---------------- END Váriaveis da torre ------------------
+	
 	local rect = display.newRect(x,y,tower_width,tower_height)
 	rect:setFillColor(35,155,0)
 	rect:setStrokeColor(0, 0, 255)
@@ -63,7 +73,6 @@ function t.createTower (x, y)
 	rect.postCollision = handleCorePostCollision
 	rect:addEventListener( "postCollision", rect)
 
-
 	local vision = display.newCircle(x+(tower_width/2), y+(tower_height/2),vision_radius)
 	vision:setFillColor(0, 0, 0, 0)
 	vision:setStrokeColor(0, 0, 255)
@@ -77,21 +86,14 @@ function t.createTower (x, y)
 	vision.collision = handleVisionCollision
 	vision:addEventListener( "collision", vision)
 
-
 	-- Forma da Figura
-	tower.shape = {}
 	table.insert(tower.shape,rect)
 	table.insert(tower.shape, vision)
-
-
-	tower.damage = 100
-	tower.detectArea = vision_radius
 
 	physics.addBody( rect, "static" ,{ density=0.8, friction=0.3, bounce=0.3 , isSensor=false } )
 	physics.addBody( vision ,{ density=0.0, friction=0.0, bounce=0.0, isSensor=true , radius = vision_radius} )
 
 	local joint = physics.newJoint("pivot", rect, vision, x+(tower_width/2), y+(tower_height/2))
-
 
 	tower.fire = fire
 
