@@ -22,16 +22,10 @@ Jogabilidade:
 	Arqueiros ganham bonus contra Cavalaria e Cavalaria ganha bonus contra Guerreiros.
 		Cada unidade possui um nivel de Armadura, Arma e Quantidade nos quais o jogador poderá fazer Upgrades para melhorá-las
 		
-		O jogador poderá a todo momento clicar na sua wave e escolher se ela irá: Atacar uma torre do mapa, atacar uma wave inimiga ou se juntar a 
-	outra wave sua.
-		
-		Ir direto para base inimiga é o default. Se o jogador não clicar na wave, ela irá para a base inimiga. Se a wave obtiver sucesso ao tomar 
-	uma torre ou destruir a wave inimiga o restante das unidades sobreviventes, irá para a base inimiga.
-		
-		Se ele escolher atacar uma torre a Wave mudará sua rota anterio e irá na direção da torre. Ao atacá-la, caso contenha exército inimigo, ela 
-	terá que reduzir as defesas da torre a 0 para tomá-la ou, caso não tenha, simplismente tomá-la.
-		Ao tomá-la a torre passa a ser desse jogador e passará a atacar o exército inimigo que passar perto dela. Além disso, a torre habilita a 
-	opção de upgrade da torre, que o jogador pode fazer para aumentar o dano, a defesa contra um ataque a ela e o alcance (raio de visão da torre)
+		O jogador poderá escolher a todo momento entre: Atacar uma torre do mapa ou ir direto para base inimiga (default)
+		Se ele escolher atacar uma torre, a próxima Wave irá na direção da torre e irá atacá-la (caso contenha exército inimigo) e tomá-la ou 
+	simplismente tomá-la.
+		Ao tomá-la a torre passa a ser desse jogador e passará a atacar o exército inimigo que passar perto dela.
 		
 		O jogador ganhará uma quantidade Y de dinheiro por segundo. 
 		
@@ -42,13 +36,8 @@ Upgrades:
 			Armadura
 			Quantidade na Wave
 		
-		Torre:
-			Dano
-			Defesa
-			Raio de visão
 
-A pensar:
+Perguntas:
 
-	- Nome do Jogo
-	- Dinheiro para upgrades... Só por segundo? ganha bonus por unidade morta?
-	
+		Upgrade nas Torres?
+		Lvl do player? Mais dinheiro por segundo, mais mapas, mais unidades ?

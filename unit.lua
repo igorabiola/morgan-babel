@@ -30,17 +30,10 @@ end
 
 function u.createUnit (w, h, size)
 	local unit = obj.createObj( "unit" )
-	
-	---------------- Váriaveis da unidade ------------------
-	unit.shape = {}
-	unit.velocity = 10
-	unit.moveStatus = false
-	unit.life = 100
-	unit.type = "warrior"
-	unit.damage = 10
-	unit.defense = 5
-	---------------- END: Váriaveis da unidade ------------------
-	
+
+	--unitGroup = display.newGroup()
+	--unitGroup:translate(w,h)
+
 	local circ = display.newCircle(w, h, size)
 	circ:setFillColor(255,0,0)
 	circ:setStrokeColor(0, 0, 255)
@@ -49,6 +42,7 @@ function u.createUnit (w, h, size)
 	circ.container = unit
 	circ.type = "core"
 	circ.id = circ.type.."_" .. unit.id
+
 
 
 	circ.preCollision = handleCorePreCollision
@@ -60,7 +54,8 @@ function u.createUnit (w, h, size)
 	circ.postCollision = handleCorePostCollision
 	circ:addEventListener( "postCollision", circ)
 
-	
+	--unitGroup:insert(circ, true)
+
 	local vision = display.newCircle(w, h, size * 2)
 	vision:setFillColor(0, 0, 0, 0)
 	vision:setStrokeColor(0, 0, 255)
@@ -75,6 +70,7 @@ function u.createUnit (w, h, size)
 	vision:addEventListener( "collision", vision)
 
 	-- Forma da Figura
+	unit.shape = {}
 	table.insert(unit.shape, circ)
 	table.insert(unit.shape, vision)
 
@@ -82,6 +78,14 @@ function u.createUnit (w, h, size)
 	physics.addBody( vision ,{ density=0.0, friction=0.0, bounce=0.0, isSensor=true , radius = size*2} )
 
 	local joint = physics.newJoint("pivot", circ, vision, w,h)
+
+	-- Velocidade da Figura
+	unit.velocity = 10
+
+	-- Status do movimento
+	unit.moveStatus = false
+
+	unit.life = 1000
 
 	function unit._move(self, ...)
 		local x,y,count, xf, yf, callback = ...
