@@ -3,11 +3,13 @@ local tower = require  "tower"
 local s = {}
 s.info = "modulo de cenario"
 --largura e altura
-local w, h = display.contentWidth, display.contentHeight
+local w, h, sw, sh = display.contentWidth, display.contentHeight, 24, 40
+
 s.sectors = {}
 s.towers = {}
-s.sector_width = w / 24
-s.sector_height = h / 40
+
+s.sector_width = w / sw
+s.sector_height = h / sh
 
 local function loadTowers(map_towers)
 	for k,v in ipairs(map_towers) do
@@ -29,10 +31,10 @@ local function loadObstacles(obstacles)
 	end	
 		
 	--Mostra os obstaculos
-	sector_width = w / 24
-	sector_height = h / 40
-	for i = 0, 24 do
-		for j = 0, 40 do
+	sector_width = w / sw
+	sector_height = h / sh
+	for i = 0, sw do
+		for j = 0, sh do
 			if (s.sectors[i][j] == 1) then
 				local rect = display.newRect(i * sector_width , j * sector_height, sector_width, sector_height)
 				rect:setFillColor(0,0,0,0)
@@ -42,7 +44,7 @@ local function loadObstacles(obstacles)
 	end
 	
 	io.write("    ")
-	for j = 0, 40 do
+	for j = 0, sh do
 		if j < 10 then
 			io.write(j,"  ")
 		else
@@ -50,12 +52,12 @@ local function loadObstacles(obstacles)
 		end
 	end
 	print()
-	for i = 24, 0 , -1 do
+	for i = sw, 0 , -1 do
 		if (i<10) then io.write(i,"   ")
 		else
 			io.write(i,"  ")
 		end
-		for j = 0, 40 do
+		for j = 0, sh do
 			io.write(s.sectors[i][j],"  ")
 		end
 		print()
@@ -66,16 +68,17 @@ end
 function loadSectors()
 
 	--Zera todo os setores
-	for i = 0, 24 do
+	for i = 0, sw do
 		s.sectors[i] = {}
-		for j = 0, 40 do
+		for j = 0, sh do
 			s.sectors[i][j] = 0
 		end
 	end
 	
 	--Gera as linhas verticais dos setores
-	sector_width = w / 24
-	for i = 0, 24 do
+	sector_width = w / sw
+	
+	for i = 0, sw do
 		point = i * sector_width
 		local line = display.newLine( point,0, point,h )
 		line:setColor( 0, 0, 0, 100 )
@@ -83,8 +86,9 @@ function loadSectors()
 	end
 	
 	--Gera as linha horizontais.
-	sector_height = h / 40
-	for j = 0, 40 do
+	sector_height = h / sh
+	
+	for j = 0, sh do
 		point = j * sector_height
 		local line = display.newLine( 0,point, w, point )
 		line:setColor( 0, 0, 0, 100 )
@@ -105,6 +109,16 @@ function s.loadMap(name)
 	loadObstacles(map.obstacles)
 	
 	return { background = background, map = map, sectors = s.sectors }
+end
+
+-- Transforma pixels em setores
+function s.getSector(x,y) 
+	return x/s.sector_width , y/s.sector_height
+end
+
+-- Transforma setores em pixels
+function s.getPixel(sx,sy)
+	return s.sector_width*sx , s.sector_height*sy
 end
 
 return s

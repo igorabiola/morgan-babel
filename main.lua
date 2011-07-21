@@ -31,9 +31,9 @@ local function testClick(self, event)
 		end
 	end
 	if (phase == "began") then
-		--local warrior = unit.createUnit(w/2, h, 20)
-
-		--warrior:moveTo(w/2,0, warrior:call(warrior.destroy))
+		local sx, sy = scenario.getSector(event.xStart,event.yStart)
+		print(sx,sy)
+		print(scenario.getPixel(sx,sy))
 	end
 end
 
@@ -110,4 +110,21 @@ for k,v in pairs(real_path) do
 	drawBall(v.y,v.x) 
 end
 
+--[[
+
+local moveIndex = 1
+local function rCallback()
+	moveIndex = moveIndex + 1
+	if moveIndex <= #gameMap.map.path then
+		warrior:moveTo(gameMap.map.path[moveIndex][1], gameMap.map.path[moveIndex][2], rCallback)
+	else
+		warrior:destroy()
+	end
+end
+
+for k,v in pairs(real_path[1]) do
+	print(k,v) 
+end
+]]
+--warrior:moveTo(scenario.real_path[1].y, real_path[1].x, rCallback)
 -- Fim Teste
